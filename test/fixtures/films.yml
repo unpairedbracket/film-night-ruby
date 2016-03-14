@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  imdbid: MyString
+  title: 
+  year: 
+  enabled: false
+
+two:
+  imdbid: MyString
+  title: 
+  year: 
+  enabled: false
