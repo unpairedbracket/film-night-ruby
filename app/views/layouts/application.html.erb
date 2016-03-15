@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Filmnight</title>
+  <% if content_for?(:head) %>
+    <%= content_for(:head) %>
+  <% else %>
+    <title>Default title</title>
+  <% end %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#455A64">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </head>
 <body>
-
-<%= yield %>
-
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
-<%= link_to "Sign in with Google", user_omniauth_authorize_path(:google_oauth2) %>
+  <%= render 'topnav' %>
+  <div id="container">
+    <%= yield %>
+  </div>
+  <script>window.addEventListener("load", function(){initPageFragment("<%= request.original_fullpath %>");})</script>
+  <p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>
 </body>
 </html>
+

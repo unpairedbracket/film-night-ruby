@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160314022014) do
+ActiveRecord::Schema.define(version: 20160315003854) do
 
   create_table "film_nights", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -26,6 +26,17 @@ ActiveRecord::Schema.define(version: 20160314022014) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "proposals", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "film_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean  "veto"
+  end
+
+  add_index "proposals", ["film_id"], name: "index_proposals_on_film_id"
+  add_index "proposals", ["user_id"], name: "index_proposals_on_user_id"
 
   create_table "users", force: :cascade do |t|
     t.string   "email",      default: "", null: false

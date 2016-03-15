@@ -5,8 +5,21 @@ Rails.application.routes.draw do
     get 'sign_in', :to => 'devise/sessions#new', :as => :new_user_session
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
-
-  root 'welcome#index'
+  
+  resources :films, :film_nights
+  
+  get 'nominate', to: 'proposals#new'
+  post 'admin/nominationhandler', to: 'proposals#create'
+  
+  get 'voting', to: 'votes#new'
+  post 'admin/votinghandler', to: 'votes#create'
+  
+  get 'results', to: 'votes#index'
+  
+  get 'admin-console', to: 'film_nights#index'
+  post 'admin/adminhandler', to: 'film_nights#create'
+  
+  root 'proposals#new'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

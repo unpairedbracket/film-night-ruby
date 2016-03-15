@@ -13,7 +13,5 @@ class User < ActiveRecord::Base
       user.name = data.name   # assuming the user model has a name
       user.image = data.image # assuming the user model has an image
     end
-    
-    user
   end
 end
