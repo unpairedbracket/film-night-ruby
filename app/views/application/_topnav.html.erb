@@ -7,7 +7,7 @@
     <a id="resultsTab" href="results" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if request.original_fullpath == '/results' %>>Results</a>
     <a id="settingsTab" href="settings" onclick="moveIndicator(this)" class="tab" <%= 'data-active=true' if request.original_fullpath == '/settings' %>>Settings</a>
     <% if current_user %>
-      <a id="adminTab" href="admin-console.php" onclick="moveIndicator(this)" class="tab" <%= 'data-active="true"' if request.original_fullpath == '/admin-console' %>>Admin</a>
+      <a id="adminTab" href="admin-console" onclick="moveIndicator(this)" class="tab" <%= 'data-active="true"' if request.original_fullpath == '/admin-console' %>>Admin</a>
     <% end %>
     <% if user_signed_in? %>
       <div>
@@ -54,8 +54,8 @@ function hideContent(){
 }
 
 function showContent(){
-  setTimeout(closeClapper, 300);
-  setTimeout(shrinkHeader, 800);
+  closeClapper();
+  setTimeout(shrinkHeader, 500);
 }
 
 function shrinkHeader(){
@@ -124,20 +124,22 @@ function changePage(href){
   var left = indicator.style.left;
   var right = indicator.style.right;
   var xhr = new XMLHttpRequest();
-  xhr.open('GET','page-fragments/' + href);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.open('GET', href);
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   xhr.onload = function(){
     window.history.pushState({html: xhr.responseText, tabID: currentTab.id} , href, href);
     var container = document.getElementById('container');
     container.style.animationName = "slide-out";
     container.style.opacity =  "0";
     var f = function(){
-
+      restext = xhr.responseText;
       container.innerHTML = xhr.responseText;
-      initPageFragment('page-fragments/'+href);
-      container.style.animationName = "slide-in";
-      container.style.opacity =  "1";}
-
+      initPageFragment("/"+href).then(function() {
+        showContent();
+        container.style.animationName = "slide-in";
+        container.style.opacity =  "1";
+      })
+    }
     setTimeout(f, 500);
   }
   xhr.send();
@@ -149,7 +151,7 @@ window.onpopstate = function(e){
       document.getElementById('container').innerHTML = e.state.html;
       var tab = document.getElementById(e.state.tabID);
       moveIndicator(tab);
-      initPageFragment('page-fragments/'+tab.attributes.href.value);
+      initPageFragment('/'+tab.attributes.href.value).then(showContent);
     }else{
       location.reload();
     }

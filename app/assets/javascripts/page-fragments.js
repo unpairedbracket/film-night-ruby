@@ -1,13 +1,11 @@
 function initPageFragment(fragUrl) {
+  console.log(fragUrl);
   switch(fragUrl) {
-    case "page-fragments/voting.php":
-      initVoting();
-      break;
-    case "page-fragments/results.php":
-      initResults();
-      break;
+    case "/voting":
+      return initVoting();
+    case "/results":
+      return initResults();
     default:
-      showContent();
-      break;
+      return Promise.resolve();
   }
 }

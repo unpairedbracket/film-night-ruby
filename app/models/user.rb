@@ -3,6 +3,9 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :omniauthable, :omniauth_providers => [:google_oauth2]
   
+  has_many :proposals
+  has_many :votes
+  
   def self.from_omniauth(access_token)
     data = access_token.info
 

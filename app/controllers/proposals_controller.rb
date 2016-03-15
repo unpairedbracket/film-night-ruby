@@ -1,5 +1,6 @@
 class ProposalsController < ApplicationController
   def new
+    render layout: !request.xhr?
   end
   
   def create

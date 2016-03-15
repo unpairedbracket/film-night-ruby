@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160315003854) do
+ActiveRecord::Schema.define(version: 20160315034133) do
 
   create_table "film_nights", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -38,6 +38,15 @@ ActiveRecord::Schema.define(version: 20160315003854) do
   add_index "proposals", ["film_id"], name: "index_proposals_on_film_id"
   add_index "proposals", ["user_id"], name: "index_proposals_on_user_id"
 
+  create_table "selections", force: :cascade do |t|
+    t.integer  "film_id"
+    t.integer  "film_night_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "selections", ["film_night_id"], name: "index_selections_on_film_night_id"
+
   create_table "users", force: :cascade do |t|
     t.string   "email",      default: "", null: false
     t.string   "password",   default: "", null: false
@@ -50,5 +59,16 @@ ActiveRecord::Schema.define(version: 20160315003854) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
+
+  create_table "votes", force: :cascade do |t|
+    t.integer  "selection_id"
+    t.integer  "user_id"
+    t.integer  "position"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "votes", ["selection_id"], name: "index_votes_on_selection_id"
+  add_index "votes", ["user_id"], name: "index_votes_on_user_id"
 
 end

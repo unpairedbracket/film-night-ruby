@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
   
-  resources :films, :film_nights
+  resources :films, :film_nights, :selections
   
   get 'nominate', to: 'proposals#new'
   post 'admin/nominationhandler', to: 'proposals#create'
