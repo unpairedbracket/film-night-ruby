@@ -160,7 +160,7 @@ function submitFilms(){
   document.getElementById('error-message').innerHTML = 'Submitting';
   var xhr = new XMLHttpRequest();
   xhr.open('POST', 'admin/nominationhandler');
-  xhr.setRequestHeader('accept', 'application/json');
+  xhr.setRequestHeader('Accept', 'application/json');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
   xhr.onload = function() {

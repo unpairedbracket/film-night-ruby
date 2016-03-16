@@ -2,11 +2,11 @@
   <div id="tabs-wrapper">
   <div id="page-tabs">
     <div id="indicator"></div>
-    <a id="nominateTab" href="nominate" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if request.original_fullpath == '/nominate' %>>Add Films</a>
-    <a id="votingTab" href="voting" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if request.original_fullpath == '/voting' %>>Voting</a>
-    <a id="resultsTab" href="results" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if request.original_fullpath == '/results' %>>Results</a>
-    <a id="settingsTab" href="settings" onclick="moveIndicator(this)" class="tab" <%= 'data-active=true' if request.original_fullpath == '/settings' %>>Settings</a>
-    <% if current_user %>
+    <a id="nominateTab" href="nominate" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if @type == 'nominate' %>>Add Films</a>
+    <a id="votingTab" href="voting" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if @type == 'voting' %>>Voting</a>
+    <a id="resultsTab" href="results" onclick="slideIndicator(event)" class="tab" <%= 'data-active=true' if @type == 'results' %>>Results</a>
+    <a id="settingsTab" href="settings" onclick="moveIndicator(this)" class="tab" <%= 'data-active=true' if @type == 'settings' %>>Settings</a>
+    <% if current_user.admin %>
       <a id="adminTab" href="admin-console" onclick="moveIndicator(this)" class="tab" <%= 'data-active="true"' if request.original_fullpath == '/admin-console' %>>Admin</a>
     <% end %>
     <% if user_signed_in? %>
@@ -134,11 +134,11 @@ function changePage(href){
     var f = function(){
       restext = xhr.responseText;
       container.innerHTML = xhr.responseText;
-      initPageFragment("/"+href).then(function() {
+      initPageFragment(href).then(function() {
         showContent();
         container.style.animationName = "slide-in";
         container.style.opacity =  "1";
-      })
+      }, hideContent);
     }
     setTimeout(f, 500);
   }
@@ -151,7 +151,7 @@ window.onpopstate = function(e){
       document.getElementById('container').innerHTML = e.state.html;
       var tab = document.getElementById(e.state.tabID);
       moveIndicator(tab);
-      initPageFragment('/'+tab.attributes.href.value).then(showContent);
+      initPageFragment(tab.attributes.href.value).then(showContent, hideContent);
     }else{
       location.reload();
     }

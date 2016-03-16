@@ -1,5 +1,6 @@
 class ProposalsController < ApplicationController
   def new
+    @type = 'nominate'
     render layout: !request.xhr?
   end
   

@@ -20,7 +20,7 @@
   <div id="container">
     <%= yield %>
   </div>
-  <script>window.addEventListener("load", function(){initPageFragment("<%= request.original_fullpath %>").then(showContent);})</script>
+  <script>window.addEventListener("load", function(){initPageFragment("<%= @type %>").then(showContent, hideContent);})</script>
   <p class="notice"><%= notice %></p>
   <p class="alert"><%= alert %></p>
 </body>

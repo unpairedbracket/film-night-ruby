@@ -13,8 +13,7 @@ function initVoting(){
   ThisTimeDown = false;
   numberOfFields = 0;
   if(document.getElementById('cards') === null) {
-    hideContent();
-    return;
+    return Promise.reject(new Error('NoCards'));
   }
   document.getElementById("submit").addEventListener("click",function(){submit();});
   document.getElementById("withdraw").addEventListener("click",function(){withdraw();});
@@ -32,6 +31,7 @@ function initVoting(){
     }
   }).catch(function(error) {
     console.log("Something went wrong:", error);
+    throw error;
   });
 }
 
@@ -42,7 +42,6 @@ function populateList(values){
     numberOfFields++;
     list.innerHTML += generateHTMLToAdd();
   }
-  // Loop through our chapter urls
   return Promise.all(
     values.map(getFilmInfo)
   ).then(function(filmInfos) {
@@ -57,7 +56,10 @@ function populateList(values){
 function getFilmInfo(film) {
   return fetch("https://www.omdbapi.com/?i=" + film.imdbid + "&plot=short&r=json&b").then(function(response){
     return response.json();
-  })
+  }).then(function(filmInfo) {
+    filmInfo.selection_id = film.selection_id;
+    return filmInfo;
+  });
 }
 
 function setButtons(voted) {
@@ -153,6 +155,7 @@ function generateHTMLToAdd(){
 function getInfoFromListItem(id){
   var response = {};
   response.imdbID = document.getElementById(id).dataset.id;
+  response.selection_id = document.getElementById(id).dataset.selid;
   response.Title = document.getElementById(id).innerHTML;
   response.Year = document.getElementById("Year"+id).innerHTML.substring(14);
   response.Metascore = document.getElementById("MetaScore"+id).innerHTML.substring(19);
@@ -165,6 +168,7 @@ function getInfoFromListItem(id){
 
 function fillOutListItemWithoutListeners(id, response){
   document.getElementById(id).dataset.id = response.imdbID;
+  document.getElementById(id).dataset.selid = response.selection_id;
   document.getElementById(id).innerHTML = response.Title;
   document.getElementById("img"+id).src = response.Poster;
   document.getElementById("Plot"+id).innerHTML = "<b> Plot:</b> "+response.Plot;
@@ -183,7 +187,7 @@ function submit(){
   console.log("submit");
   var orderedTitles = {};
   for(var i=0; i< numberOfFields;i++){
-    var imdbid = document.getElementById(i+1).dataset.id;
+    var imdbid = document.getElementById(i+1).dataset.selid;
     orderedTitles[imdbid] = i+1;
   }
   var button = document.getElementById("submit");
@@ -192,8 +196,10 @@ function submit(){
   button.disabled=true;
   button.innerHTML="Submitting";
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'admin/votinghandler.php');
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.open('POST', 'admin/votinghandler');
+  xhr.setRequestHeader('Accept', 'application/json');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
   xhr.onload = function() {
     button.innerHTML="Submitted";
     console.log(xhr.responseText);
@@ -202,7 +208,7 @@ function submit(){
       location.reload();
     }
   };
-  xhr.send('votes=' + JSON.stringify(orderedTitles));
+  xhr.send(JSON.stringify({vote: orderedTitles}));
 }
 
 function withdraw(){
@@ -213,11 +219,13 @@ function withdraw(){
   button.innerHTML="Withdrawing";
   reenableSubmitButton("Submit Vote");
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'admin/votinghandler.php');
+  xhr.open('POST', 'admin/votinghandler');
+  xhr.setRequestHeader('Accept', 'application/json');
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
   xhr.onload = function() {
     button.innerHTML="Withdrawn";
     console.log(xhr.responseText);
   };
-  xhr.send('votes=WITHDRAW');
+  xhr.send("_method=delete");
 }

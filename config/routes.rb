@@ -1,25 +1,27 @@
 Rails.application.routes.draw do
+  root :to => redirect('/nominate')
+
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
 
   devise_scope :user do
     get 'sign_in', :to => 'devise/sessions#new', :as => :new_user_session
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
-  
-  resources :films, :film_nights, :selections
-  
+
+  resources :films, :film_nights, :selections, :votes
+
   get 'nominate', to: 'proposals#new'
   post 'admin/nominationhandler', to: 'proposals#create'
-  
+
   get 'voting', to: 'votes#new'
   post 'admin/votinghandler', to: 'votes#create'
-  
-  get 'results', to: 'votes#index'
-  
+  delete 'admin/votinghandler', to: 'votes#delete'
+
+  get 'results', to: 'votes#results'
+
   get 'admin-console', to: 'film_nights#index'
   post 'admin/adminhandler', to: 'film_nights#create'
-  
-  root 'proposals#new'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

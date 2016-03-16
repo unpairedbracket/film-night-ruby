@@ -1,9 +1,9 @@
 function initPageFragment(fragUrl) {
   console.log(fragUrl);
   switch(fragUrl) {
-    case "/voting":
+    case "voting":
       return initVoting();
-    case "/results":
+    case "results":
       return initResults();
     default:
       return Promise.resolve();
